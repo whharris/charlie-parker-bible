@@ -16,8 +16,6 @@ class Bible
     # Chapter and verse are optional.
     # If bible_xml is formatted as expected, always returns a hash.
     
-    # TODO: Handle args.count > 3
-    
     # Book
     if args.count > 0
       book = @bible_full_text['book'][args[0].gsub('-',' ')] # URIs use hyphens for spaces
@@ -35,6 +33,10 @@ class Bible
       verse = chapter['verse'][args[2]] if args[2]
       return nil if verse.nil?
       return verse if args.count == 3
+    end
+    
+    if args.count > 3
+      return nil
     end
     
   end
