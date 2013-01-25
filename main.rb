@@ -16,7 +16,7 @@ class CharlieParkerBible < Sinatra::Base
       # Traverses text_hash looking for value strings having the key 'content'.
       # If the string matches for "god" or "the lord", substitute with string name_sub.
       
-      # TODO: Don't match 'the lord Jesus' eg 1 Corinthians 1:3
+      # TODO: Don't match 'the lord Jesus' eg 1 Corinthians 1:3.
       names_for_god = %r{god|the lord}i
       
       edited_text = {}
@@ -36,6 +36,24 @@ class CharlieParkerBible < Sinatra::Base
 
     end
     
+    def book_name_capitalize(book_name_str)
+      # Books of the Bible should have all words capitalized except "or".
+      capitalized_book_name = ""
+      
+      tmp = book_name_str.split(" ")
+      tmp.each do |t|
+        if t.match(%r{of}i)
+          t.downcase!
+        else
+          t.capitalize! if t != "of"  
+        end
+        capitalized_book_name << t + " "
+      end
+      
+      capitalized_book_name.strip
+      
+    end
+    
   end
 
   get '/' do
@@ -50,24 +68,25 @@ class CharlieParkerBible < Sinatra::Base
   
   get '/:name_of_god_param/*' do
     
-    bible_lookup_args = params[:splat][0].split('/')
+    # Parse out params.
+    bible_lookup_args = params[:splat][0].split('/') 
+    name_of_god = params[:name_of_god_param]
+    
+    # Clean up params. URIs use hyphens for spaces.
+    bible_lookup_args[0] = bible_lookup_args[0].gsub('-',' ') # Book name
+    name_of_god = name_of_god.gsub('-',' ')
+    bible_lookup_args[0] = book_name_capitalize(bible_lookup_args[0]) # Makes the book name param case insensitive.
+    
+    # Get the bible passage.
     bible_lookup_result = @@bible.lookup(*bible_lookup_args)
     
     if bible_lookup_result.nil?
       halt 404, "Passage not found."
     end
-    
-    name_of_god = params[:name_of_god_param]
       
     if request.accept? 'application/json'
-      
-      http_response = sub_god_in(
-        name_of_god.gsub('-',' '), # URIs use hyphens for spaces
-        bible_lookup_result
-        )
-      
+      http_response = sub_god_in(name_of_god, bible_lookup_result)
       http_response.to_json
-      
     else
       status 406
       "JSON required."

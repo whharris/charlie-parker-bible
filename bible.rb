@@ -18,17 +18,17 @@ class Bible
     
     # Book
     if args.count > 0
-      book = @bible_full_text['book'][args[0].gsub('-',' ')] # URIs use hyphens for spaces
+      book = @bible_full_text['book'][args[0]]
       return nil if book.nil?
       return book if args.count == 1
     end
-    # Book > Chapter
+    # Book => Chapter
     if args.count > 1
       chapter = book['chapter'][args[1]] if args[1]
       return nil if chapter.nil?
       return chapter if args.count == 2
     end
-    # Book > Chapter > Verse
+    # Book => Chapter => Verse
     if args.count > 2
       verse = chapter['verse'][args[2]] if args[2]
       return nil if verse.nil?
