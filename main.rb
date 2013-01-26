@@ -61,10 +61,10 @@ class CharlieParkerBible < Sinatra::Base
     # TODO: Write the front end.
   end
   
-  get '/:book_title' do
+  get '/:name_of_god_param' do
     # Don't return the whole Bible. It's over 5 mb.
     status 403
-    "This file is too large. Try /#{params[:book_title]}/Genesis."
+    "This file is too large. Try /#{params[:name_of_god_param]}/Genesis."
   end
   
   get '/*/' do
