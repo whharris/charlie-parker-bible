@@ -16,7 +16,7 @@ end
 describe "text replacement" do
   
   it "converts hyphens to spaces" do
-    # Get args are path, query params, rack_env (in this case a header)
+    # Args for get are path, query params, rack_env (in this case a header)
     get '/Charlie-Parker/Genesis/1/1', nil, 'HTTP_ACCEPT' => 'application/json'
     assert last_response.ok?
     assert_match "Charlie Parker", last_response.body
@@ -139,6 +139,7 @@ describe "JSON required error" do
   end
   
 end
+
 
 ## Other ##
 
