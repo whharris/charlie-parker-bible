@@ -55,10 +55,6 @@ class CharlieParkerBible < Sinatra::Base
       
     end
     
-    def bible_lookup_fail
-      halt 404, "Passage not found."
-    end
-    
   end
 
   get '/' do
@@ -66,15 +62,9 @@ class CharlieParkerBible < Sinatra::Base
   end
   
   get '/:book_title' do
-    bible_lookup_result = @@bible.lookup(book_title_capitalize(params[:book_title].gsub('-',' '))) # URIs use hyphens for spaces.
-    if not bible_lookup_result.nil?
-      # Don't return the whole Bible. It's over 5 mb.
-      status 403
-      "This file is too large. Try /#{params[:book_title]}/Genesis."  
-    else
-      bible_lookup_fail # 404
-    end
-    
+    # Don't return the whole Bible. It's over 5 mb.
+    status 403
+    "This file is too large. Try /#{params[:book_title]}/Genesis."
   end
   
   get '/*/' do
@@ -96,7 +86,7 @@ class CharlieParkerBible < Sinatra::Base
     bible_lookup_result = @@bible.lookup(*bible_lookup_args)
     
     if bible_lookup_result.nil?
-      bible_lookup_fail # 404
+      halt 404, "Passage not found."
     end
       
     if request.accept? 'application/json'
